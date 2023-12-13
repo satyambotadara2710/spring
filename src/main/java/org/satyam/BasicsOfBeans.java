@@ -3,6 +3,7 @@ package org.satyam;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  *  what is spring and features of spring?
@@ -30,12 +31,19 @@ public class BasicsOfBeans {
 
         /*
          generate NoUniqueBeanDefinitionException bcz we try to fetch bean using data type of bean
-         but inside spring applicaiton context there aer multiple beans of same data type
+         but inside spring application context there aer multiple beans of same data type
 
             var noUniqueBeanFoundException = context.getBean(Vehical.class);
         */
 
+        /*
+            we use @Primary annotation, so it will not generate NoUniqueBeanDefinitionException
+            var primaryAnnotationUseCase = context.getBean(Vehical.class);
+         */
+        var primaryAnnotationUseCase = context.getBean(Vehical.class);
+
         System.out.println(vehical.getName());
+        System.out.println("@Primary annotation use case:"+primaryAnnotationUseCase.getName());
     }
 }
 
@@ -77,7 +85,7 @@ class Config {
         spring application context.
 
         it will generate confusion between two same type of object, to overcome from this problem we need to give name to
-        beans so application context won't be confuse on same data type beans.
+        beans so application context won't be confused on same data type beans.
 
         ex : context.getBeans("bean_name",Vehicle.class);
      */
@@ -87,7 +95,36 @@ class Config {
         vehical.setName("audi");
         return  vehical;
     }
+    /**
+     * use of  @Primary anotation
+     */
 
+    /*
+        When we have multiple beans of same data type and if we try to get beans using data type of beans it generate
+        NoUniqueBeanDefinitionException.
+        In above example we see one way to solve this issue is that we can provide bean name to each bean to uniquely
+        identify beans.
+        But we have another approach we can  use @Primary annotation.
+        when we define bean using @Primary annotation spring make bean default bean.
+        Therefor if inside spring application context there are multiple beans of same data type, and we try to get bean
+        using only data type of the bean spring not generate NoUniqueBeanDefinitionException instead of it will give
+        default bean from list of same data type bean.
+
+       ex : if i try to get bean of volvo using context.getBeans(Vehicle.class);
+
+       here I am not passing any bean name. then it should generate NoUniqueBeanDefinitionException because there are
+       3 beans of vehicle.
+       but if I make volvo bean as @Primary then it will not generate any error it will return volvo bean as it is
+       default bean for vehicle data type
+     */
+
+    @Bean(name = "volvo")
+    @Primary
+    Vehical getVehicle3(){
+        var vehical = new Vehical();
+        vehical.setName("volvo");
+        return  vehical;
+    }
 }
 
 // simple java pojo class
