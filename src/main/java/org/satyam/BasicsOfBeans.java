@@ -26,12 +26,14 @@ public class BasicsOfBeans {
         var context = new AnnotationConfigApplicationContext(Config.class);
 
         // get bean using context.getBean("bean_name",bean_type.class);
-        var vehical = context.getBean("tesla",Vehical.class);
+        var vehical = context.getBean("audi",Vehical.class);
 
-        // generate NoUniqueBeanDefinitionException bcz we try to fetch bean using data type of bean
-        // but inside spring applicaiton context there aer multiple beans of same data type
-        var noUniqueBeanFoundException = context.getBean(Vehical.class);
+        /*
+         generate NoUniqueBeanDefinitionException bcz we try to fetch bean using data type of bean
+         but inside spring applicaiton context there aer multiple beans of same data type
 
+            var noUniqueBeanFoundException = context.getBean(Vehical.class);
+        */
 
         System.out.println(vehical.getName());
     }
