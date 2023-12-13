@@ -26,7 +26,12 @@ public class BasicsOfBeans {
         var context = new AnnotationConfigApplicationContext(Config.class);
 
         // get bean using context.getBean("bean_name",bean_type.class);
-        var vehical = context.getBean(Vehical.class);
+        var vehical = context.getBean("tesla",Vehical.class);
+
+        // generate NoUniqueBeanDefinitionException bcz we try to fetch bean using data type of bean
+        // but inside spring applicaiton context there aer multiple beans of same data type
+        var noUniqueBeanFoundException = context.getBean(Vehical.class);
+
 
         System.out.println(vehical.getName());
     }
@@ -62,6 +67,18 @@ class Config {
         vehical.setName("tesla");
         return vehical;
     }
+    /*
+        NoUniqueBeanDefinitionException is happened when try to get bean without bean name directly with bean data type
+        ex : context.getBeans(Vehicle.class);
+
+        if there is two or more method that return same type of object then there are more then one object inside
+        spring application context.
+
+        it will generate confusion between two same type of object, to overcome from this problem we need to give name to
+        beans so application context won't be confuse on same data type beans.
+
+        ex : context.getBeans("bean_name",Vehicle.class);
+     */
     @Bean(name = "audi")
     Vehical getVehicle2(){
         var vehical = new Vehical();
