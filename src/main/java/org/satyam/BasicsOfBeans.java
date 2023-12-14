@@ -3,7 +3,8 @@ package org.satyam;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Component;
 
-import java.lang.annotation.Annotation;
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 
 /**
  *  what is spring and features of spring?
@@ -24,10 +25,10 @@ public class BasicsOfBeans {
         // retrieves beans from application context
         // beans are created using @Beans,so we need to retrieve using AnnotationConfigApplicationContext
         // pass the config class file to retrieves beans from it.
-        var context = new AnnotationConfigApplicationContext(Config.class);
+//        var context = new AnnotationConfigApplicationContext(Config.class);
 
         // get bean using context.getBean("bean_name",bean_type.class);
-        var vehical = context.getBean("audi",Vehical.class);
+//        var vehical = context.getBean("audi",Vehical.class);
 
         /*
          generate NoUniqueBeanDefinitionException bcz we try to fetch bean using data type of bean
@@ -40,10 +41,10 @@ public class BasicsOfBeans {
             we use @Primary annotation, so it will not generate NoUniqueBeanDefinitionException
             var primaryAnnotationUseCase = context.getBean(Vehical.class);
          */
-        var primaryAnnotationUseCase = context.getBean(Vehical.class);
-
-        System.out.println(vehical.getName());
-        System.out.println("@Primary annotation use case:"+primaryAnnotationUseCase.getName());
+//        var primaryAnnotationUseCase = context.getBean(Vehical.class);
+//
+//        System.out.println(vehical.getName());
+//        System.out.println("@Primary annotation use case:"+primaryAnnotationUseCase.getName());
 
 
         /*
@@ -52,7 +53,8 @@ public class BasicsOfBeans {
         System.out.println("bean create using @Component ->> ");
         var componentAnnotationContext = new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class);
         var vehicle = componentAnnotationContext.getBean(Vehical.class);
-        vehical.printHello();
+
+        vehicle.printHello();
     }
 
 }
@@ -66,12 +68,12 @@ public class BasicsOfBeans {
     Beans are simple java class that are managed by spring.
     In normal class we need to create object of the class and manage by our-self
     but in bean no need to manage the object spring automatically manage the lifecycle of class object.
- */
+*/
 
 /*
     Add annotation @Configuration in class. This configuration allow us to create bean.
     inside class that beans are register in application context
- */
+*/
 
 
 
@@ -83,12 +85,12 @@ class Config {
     // bean is register with name in application context
     // by default the method name is consider as the bean name in spring
     // we can give custom bean name using  @Bean(name = "custom_bean_name")
-    @Bean(name = "tesla")
-    Vehical getVehicle(){
-        var vehical = new Vehical();
-        vehical.setName("tesla");
-        return vehical;
-    }
+//    @Bean(name = "tesla")
+//    Vehical getVehicle(){
+//        var vehical = new Vehical();
+//        vehical.setName("tesla");
+//        return vehical;
+//    }
     /*
         NoUniqueBeanDefinitionException is happened when try to get bean without bean name directly with bean data type
         ex : context.getBeans(Vehicle.class);
@@ -101,12 +103,12 @@ class Config {
 
         ex : context.getBeans("bean_name",Vehicle.class);
      */
-    @Bean(name = "audi")
-    Vehical getVehicle2(){
-        var vehical = new Vehical();
-        vehical.setName("audi");
-        return  vehical;
-    }
+//    @Bean(name = "audi")
+//    Vehical getVehicle2(){
+//        var vehical = new Vehical();
+//        vehical.setName("audi");
+//        return  vehical;
+//    }
     /**
      * use of  @Primary anotation
      */
@@ -130,13 +132,13 @@ class Config {
        default bean for vehicle data type
      */
 
-    @Bean(name = "volvo")
-    @Primary
-    Vehical getVehicle3(){
-        var vehical = new Vehical();
-        vehical.setName("volvo");
-        return  vehical;
-    }
+//    @Bean(name = "volvo")
+//    @Primary
+//    Vehical getVehicle3(){
+//        var vehical = new Vehical();
+//        vehical.setName("volvo");
+//        return  vehical;
+//    }
 }
 
 /*
@@ -153,7 +155,24 @@ class ComponentScanExampleConfig {
 /**
  * @Component annotation
  */
+/*
+    there are two ways to create beans in spring
+    1. using @Bean
+    2. Using Stereotype annotations like @Component, @Service, @Repository,@Controller
+ */
+/*
+  Stereotype annotation : all mention below Stereotype annotations are used to create beans of class
+  these beans are managed by spring application.
+  we use any of the annotations to create bean of the class.
 
+            @Component (generic) it will use with any class.
+            @Service -> mostly used for service class where business logic are implemented.
+            @Repository -> used with the class that manage databases.
+            @Controller -> used with the class that act as the controller.
+
+  We can use any of the annotation with any class but for readability we use annotations according to the
+  role of the class in application.
+*/
 /*
     @Component annotation is generic stereotype annotation.
     @Component annotation create bean of class.
@@ -173,5 +192,14 @@ class Vehical {
     }
     public void setName(String name) {
         this.name = name;
+    }
+    @PostConstruct
+    public void initialize(){
+        System.out.println("initialize vehicle bean");
+    }
+
+    @PreDestroy
+    void Destroy(){
+        System.out.println("destroy vehicle bean");
     }
 }
