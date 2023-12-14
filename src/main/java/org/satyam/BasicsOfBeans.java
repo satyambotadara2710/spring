@@ -50,14 +50,47 @@ public class BasicsOfBeans {
         /*
            use of bean created by  @Component
          */
-        System.out.println("bean create using @Component ->> ");
-        var componentAnnotationContext = new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class);
-        var vehicle = componentAnnotationContext.getBean(Vehical.class);
+//        System.out.println("bean create using @Component ->> ");
+//        var componentAnnotationContext = new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class);
+//        var vehicle = componentAnnotationContext.getBean(Vehical.class);
+//
+//        vehicle.printHello();
+//        componentAnnotationContext.close();
 
-        vehicle.printHello();
+        /*
+                create beans programmatically
+         */
+
+
+
+//        var context = new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class);
+//        var v = context.getBean("getVehicle",Vehical.class);
+//        var v2 = context.getBean("componentBean",Vehical.class);
+//        v2.printHello();
+//        v.printHello();
+
+        /*
+          below program will generate NoUniqueBeanDefinitionException bcz ComponentScanExampleConfig have @ComponentScan
+          it will create bean of Vehicale using @Component of vehical
+          and ComponentScanExampleConfig also have @Bean so it will have 2 beans of same data type
+         */
+        /*
+        var contextProgram = new AnnotationConfigApplicationContext(Config.class);
+
+        contextProgram.registerBean("audi",Vehical.class, () -> {
+            var vehical = new Vehical();
+            vehical.setName("audi");
+            return vehical;
+        });
+
+        var name = contextProgram.getBean("audi",Vehical.class).getName();
+        System.out.println(name);
+        */
+
     }
 
 }
+
 
 /**
  *  what is beans and how to create beans ?
@@ -131,13 +164,12 @@ class Config {
        but if I make volvo bean as @Primary then it will not generate any error it will return volvo bean as it is
        default bean for vehicle data type
      */
-
 //    @Bean(name = "volvo")
 //    @Primary
-//    Vehical getVehicle3(){
+//    Vehical getVehicle3() {
 //        var vehical = new Vehical();
 //        vehical.setName("volvo");
-//        return  vehical;
+//        return vehical;
 //    }
 }
 
@@ -149,7 +181,12 @@ class Config {
 @Configuration
 @ComponentScan(basePackages = "org.satyam")
 class ComponentScanExampleConfig {
-
+    @Bean
+    public Vehical getVehicle() {
+        var v = new Vehical();
+        v.setName("audi");
+        return v;
+    }
 }
 
 /**
@@ -179,7 +216,7 @@ class ComponentScanExampleConfig {
     We need to add @ComponentScan annotation on top of configuration class to scan bean class.
  */
 // simple java pojo class
-@Component
+@Component("componentBean")
 class Vehical {
 
     private String name;
@@ -193,11 +230,18 @@ class Vehical {
     public void setName(String name) {
         this.name = name;
     }
+    /*
+    @PostConstruct -> execute this method when bean is created. Mostly the initialization logic is implement in this block
+
+     */
     @PostConstruct
     public void initialize(){
         System.out.println("initialize vehicle bean");
     }
-
+    /*
+        @PreDestroy -> execute this method when spring destroy the bean. Mostly use to release resources like db connection
+        files etc.
+     */
     @PreDestroy
     void Destroy(){
         System.out.println("destroy vehicle bean");
