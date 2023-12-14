@@ -22,6 +22,7 @@ import javax.annotation.PreDestroy;
 
 public class BasicsOfBeans {
     public static void main(String[] args) {
+
         // retrieves beans from application context
         // beans are created using @Beans,so we need to retrieve using AnnotationConfigApplicationContext
         // pass the config class file to retrieves beans from it.
