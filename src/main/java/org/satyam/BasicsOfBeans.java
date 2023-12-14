@@ -127,7 +127,15 @@ class Config {
     }
 }
 
+/**
+ * @Component annotation
+ */
+
+/*
+    @Component annotation
+ */
 // simple java pojo class
+
 class Vehical {
 
     private String name;
