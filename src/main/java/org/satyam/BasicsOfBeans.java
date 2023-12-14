@@ -1,9 +1,9 @@
 package org.satyam;
 
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
+import org.springframework.stereotype.Component;
+
+import java.lang.annotation.Annotation;
 
 /**
  *  what is spring and features of spring?
@@ -44,7 +44,17 @@ public class BasicsOfBeans {
 
         System.out.println(vehical.getName());
         System.out.println("@Primary annotation use case:"+primaryAnnotationUseCase.getName());
+
+
+        /*
+           use of bean created by  @Component
+         */
+        System.out.println("bean create using @Component ->> ");
+        var componentAnnotationContext = new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class);
+        var vehicle = componentAnnotationContext.getBean(Vehical.class);
+        vehical.printHello();
     }
+
 }
 
 /**
@@ -62,6 +72,8 @@ public class BasicsOfBeans {
     Add annotation @Configuration in class. This configuration allow us to create bean.
     inside class that beans are register in application context
  */
+
+
 
 @Configuration
 class Config {
@@ -127,15 +139,28 @@ class Config {
     }
 }
 
+/*
+    @ComponentScan annotation take base package name.
+    this annotation will scan all the class inside the base package and if class has @Component or any
+    stereotype annotation it will create beans of it.
+ */
+@Configuration
+@ComponentScan(basePackages = "org.satyam")
+class ComponentScanExampleConfig {
+
+}
+
 /**
  * @Component annotation
  */
 
 /*
-    @Component annotation
+    @Component annotation is generic stereotype annotation.
+    @Component annotation create bean of class.
+    We need to add @ComponentScan annotation on top of configuration class to scan bean class.
  */
 // simple java pojo class
-
+@Component
 class Vehical {
 
     private String name;
@@ -143,7 +168,9 @@ class Vehical {
     public String getName() {
         return name;
     }
-
+    public void printHello() {
+        System.out.println("hello world");
+    }
     public void setName(String name) {
         this.name = name;
     }
