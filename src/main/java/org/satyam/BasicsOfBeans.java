@@ -359,4 +359,3 @@ class Person {
         it will inject bean of vehicle2.
 
  */
-
