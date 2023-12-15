@@ -1,5 +1,6 @@
 package org.satyam;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -19,8 +20,15 @@ import javax.annotation.PreDestroy;
     di (dependency injection) -> DI is the implementation of ioc. IOC is achieved with help of DI
 
 */
-
+@ComponentScan("org.satyam")
 public class BasicsOfBeans {
+
+    static Person person;
+
+    static {
+        person= new AnnotationConfigApplicationContext(BasicsOfBeans.class)
+                .getBean(Person.class);
+    }
     public static void main(String[] args) {
 
         // retrieves beans from application context
@@ -88,6 +96,16 @@ public class BasicsOfBeans {
         System.out.println(name);
         */
 
+
+        /**
+         *  autowired beans
+         */
+
+//        var context = new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class);
+//        var person = context.getBean(Person.class);
+//        person.printVehicalName();
+
+        person.printVehicalName();
     }
 
 }
@@ -182,12 +200,12 @@ class Config {
 @Configuration
 @ComponentScan(basePackages = "org.satyam")
 class ComponentScanExampleConfig {
-    @Bean
-    public Vehical getVehicle() {
-        var v = new Vehical();
-        v.setName("audi");
-        return v;
-    }
+//    @Bean
+//    public Vehical getVehicle() {
+//        var v = new Vehical();
+//        v.setName("audi");
+//        return v;
+//    }
 }
 
 /**
@@ -237,7 +255,7 @@ class Vehical {
      */
     @PostConstruct
     public void initialize(){
-        System.out.println("initialize vehicle bean");
+        this.name = "audi";
     }
     /*
         @PreDestroy -> execute this method when spring destroy the bean. Mostly use to release resources like db connection
@@ -247,4 +265,49 @@ class Vehical {
     void Destroy(){
         System.out.println("destroy vehicle bean");
     }
+}
+
+
+/**
+        @Autowired annotation
+ */
+
+@Component("person")
+class Person {
+    // property base annotation
+    // in property base annotation we simply mention @Autowired on top of the class property if spring find required dependency
+    // it will inject object of vehicle class.
+//    @Autowired(required = false)
+    @Autowired
+    private Vehical vehical;
+
+    /* construction base auto-wire
+        in construction base autowired there is no need to mention @Autowired on top of the constructor method
+        we can mention it or not it works fine in both scenario.
+        when we autowired bean spring will search for required bean in spring context if  spring find any
+        relevant bean it will inject that bean in constructor.
+     */
+
+// @Autowired (optional)
+//    Person(Vehical vehical){
+//        this.vehical = vehical;
+//    }
+
+    /* setter method auto-wire
+        in setter method autowired there is compulsory to mention @Autowired on top of the setter method.
+        when we autowired bean spring will search for required bean in spring context if  spring find any
+        relevant bean it will inject that bean in setter method parameter.
+     */
+//    @Autowired (*required)
+//    public void setPerson(Vehical vehical){
+//        this.vehical= vehical;
+//    }
+
+    public void printVehicalName() {
+        if(vehical!=null)
+        System.out.println("vehical name ->>"+this.vehical.getName());
+        else
+            System.out.println("vehical name ->> default");
+    }
+
 }
