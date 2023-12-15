@@ -1,6 +1,7 @@
 package org.satyam;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.*;
 import org.springframework.stereotype.Component;
 
@@ -23,10 +24,10 @@ import javax.annotation.PreDestroy;
 @ComponentScan("org.satyam")
 public class BasicsOfBeans {
 
-    static Person person;
+    static final Person person;
 
     static {
-        person= new AnnotationConfigApplicationContext(BasicsOfBeans.class)
+        person= new AnnotationConfigApplicationContext(ComponentScanExampleConfig.class)
                 .getBean(Person.class);
     }
     public static void main(String[] args) {
@@ -106,6 +107,8 @@ public class BasicsOfBeans {
 //        person.printVehicalName();
 
         person.printVehicalName();
+
+
     }
 
 }
@@ -138,6 +141,7 @@ class Config {
     // by default the method name is consider as the bean name in spring
     // we can give custom bean name using  @Bean(name = "custom_bean_name")
 //    @Bean(name = "tesla")
+//    @Primary
 //    Vehical getVehicle(){
 //        var vehical = new Vehical();
 //        vehical.setName("tesla");
@@ -155,12 +159,12 @@ class Config {
 
         ex : context.getBeans("bean_name",Vehicle.class);
      */
-//    @Bean(name = "audi")
-//    Vehical getVehicle2(){
-//        var vehical = new Vehical();
-//        vehical.setName("audi");
-//        return  vehical;
-//    }
+    @Bean(name = "audi")
+    Vehical getVehicle2(){
+        var vehical = new Vehical();
+        vehical.setName("audi");
+        return  vehical;
+    }
     /**
      * use of  @Primary anotation
      */
@@ -235,7 +239,7 @@ class ComponentScanExampleConfig {
     We need to add @ComponentScan annotation on top of configuration class to scan bean class.
  */
 // simple java pojo class
-@Component("componentBean")
+//@Component("componentBean")
 class Vehical {
 
     private String name;
@@ -253,18 +257,18 @@ class Vehical {
     @PostConstruct -> execute this method when bean is created. Mostly the initialization logic is implement in this block
 
      */
-    @PostConstruct
-    public void initialize(){
-        this.name = "audi";
-    }
+//    @PostConstruct
+//    public void initialize(){
+//        this.name = "audi";
+//    }
     /*
         @PreDestroy -> execute this method when spring destroy the bean. Mostly use to release resources like db connection
         files etc.
      */
-    @PreDestroy
-    void Destroy(){
-        System.out.println("destroy vehicle bean");
-    }
+//    @PreDestroy
+//    void Destroy(){
+//        System.out.println("destroy vehicle bean");
+//    }
 }
 
 
@@ -278,6 +282,7 @@ class Person {
     // in property base annotation we simply mention @Autowired on top of the class property if spring find required dependency
     // it will inject object of vehicle class.
 //    @Autowired(required = false)
+//    @Autowired
     @Autowired
     private Vehical vehical;
 
@@ -289,8 +294,9 @@ class Person {
      */
 
 // @Autowired (optional)
-//    Person(Vehical vehical){
-//        this.vehical = vehical;
+//    @Autowired
+//    Person(@Qualifier("audi") Vehical audi){
+//        this.vehical = audi;
 //    }
 
     /* setter method auto-wire
@@ -311,3 +317,46 @@ class Person {
     }
 
 }
+
+/**
+ *  Note : How @Autowired work?
+ */
+
+/*
+   When we mention @Autowired on top of the constructor or parameter spring will look for the bean according to the
+   data type of the parameter where we mention @Autowired, And if spring find any bean of the data type it will inject
+   the bean.
+ */
+
+/**
+ * NOTE:
+ * what if in ioc container there are multiple beans of same data type then how spring know which bean need to inject
+ *  in @Autowired ?
+ */
+
+/*
+    Spring try to perform some steps to identify correct bean from multiple beans of same data type:
+
+    Consider scenario where there are three beans of Vehicle data type : vehicle1,vehicle2,vehicle3.
+
+    Step 1: Spring try to match the parameter name and bean name if it matches then spring will inject matched bean.
+             ex :
+                @Autowired
+                Vehicle vehicle1; it will inject vehicle1 bean
+
+                @Autowired
+                Vehicle vehicle2; it will inject vehicle2 bean
+
+    Step 2: if no any bean name match with  parameter name then spring look for which bean is mention with @Primary
+            and inject primary bean into parameter
+
+    step 3: if there is no any @Primary bean then spring will look for @Qualifier() annotation in @Autowired annotation.
+        ex:
+        @Autowired
+        public Person(@Qualifier("vehicle2") Vehicle vehicle){
+            this.vehicle = vehicle;
+        }
+        it will inject bean of vehicle2.
+
+ */
+
